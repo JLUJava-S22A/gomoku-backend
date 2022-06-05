@@ -1,0 +1,17 @@
+{
+    "user":{
+        "id":"1",
+        "name":"Merlyn",
+        "token":"123456",
+        "session":"",
+        "score":""
+    },
+    "game":{
+        "chessboard_state":""
+    },
+    "peer":"",
+    "status":{
+        "online":true,
+        "timeout": 45000
+    }
+}
