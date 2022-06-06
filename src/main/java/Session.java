@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.java_websocket.WebSocket;
 
 public class Session {
-    String sessionToken;
+    String sessionToken = "";
     //    private static Logger logger = LogManager.getLogger(Main.class.getName());
     ClientStatus client1;
     ClientStatus client2;
-    int sessionId;
+    int sessionId = -1;
 }

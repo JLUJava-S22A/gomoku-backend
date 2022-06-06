@@ -13,11 +13,11 @@ import org.apache.log4j.Logger;
 
 public class SocketServer extends WebSocketServer {
 
-    public static Queue<ClientStatus> waitingPool;
-    public static List<Session> activeSessions; // all active sessions
-    public static List<ClientStatus> activeClients; // all clients status
-    public static List<User> allUsers; // user list
-    public static List<Session> allGamesHistory; // all games history
+    public static Queue<ClientStatus> waitingPool = new LinkedList<>();
+    public static List<Session> activeSessions = new ArrayList<>(); // all active sessions
+    public static List<ClientStatus> activeClients = new ArrayList<>(); // all clients status
+    public static List<User> allUsers = new ArrayList<>(); // user list
+    public static List<Session> allGamesHistory = new ArrayList<>(); // all games history
     private static final Logger logger = LogManager.getLogger(Main.class.getName());
 
     // Construction functions.
@@ -108,7 +108,7 @@ public class SocketServer extends WebSocketServer {
             clientStatus.status = "loggedIn";
             peerStatus.status = "loggedIn";
             // create new session
-            Session session = assignSession(peerStatus,clientStatus);
+            Session session = assignSession(peerStatus, clientStatus);
             logger.debug(String.format("Client %d and %d are assigned to session %d with sessionToken %s.", clientStatus.connectionId, peerStatus.connectionId, session.sessionId, session.sessionToken));
             // update client status
             updateClientStatus(clientStatus);
@@ -134,13 +134,69 @@ public class SocketServer extends WebSocketServer {
             }//passed
             ClientStatus peerStatus = getPeer(clientStatus);
             peerStatus.game = clientStatus.game; // update peer game
-            peerStatus.status = "sync"; // update peer status
-            // update client status
-            updateClientStatus(clientStatus);
-            updateClientStatus(peerStatus);
-            // then inform peer client
-            peerStatus.send();
-            logger.debug(String.format("Sent sync package to client %s.", peerStatus.connectionId));
+            // check game end
+            int win = checkGameEnd(clientStatus.game, clientStatus.chakuIndex);
+            ClientStatus whiteStatus = clientStatus.isFirstMove == 0 ? clientStatus : peerStatus;
+            ClientStatus blackStatus = peerStatus.isFirstMove == 1 ? peerStatus : clientStatus;
+
+            if (win == 1) { // black win
+                blackStatus.status = "win";
+                whiteStatus.status = "lose";
+                logger.info(String.format("Black client %d wins in session %s.", blackStatus.connectionId, blackStatus.sessionId));
+                // end game
+                updateClientStatus(clientStatus);
+                updateClientStatus(peerStatus);
+                // update session status
+                updateSessionClient(clientStatus);
+                updateSessionClient(peerStatus);
+                clientStatus.send();
+                logger.debug(String.format("Sent game end signal to client %s.", clientStatus.connectionId));
+                peerStatus.send();
+                logger.debug(String.format("Sent game end signal to client %s.", peerStatus.connectionId));
+                // clean up
+                addGamesHistory(clientStatus.sessionId);
+                removeSession(clientStatus.sessionId);
+                removeClient(clientStatus);
+                removeClient(peerStatus);
+                logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
+                peerStatus.conn.close();
+                clientStatus.conn.close();
+                return;
+            } else if (win == 0) { // white win
+                blackStatus.status = "lose";
+                whiteStatus.status = "win";
+                logger.info(String.format("White client %d wins in session %s.", whiteStatus.connectionId, whiteStatus.sessionId));
+                // end game
+                updateClientStatus(clientStatus);
+                updateClientStatus(peerStatus);
+                // update session status
+                updateSessionClient(clientStatus);
+                updateSessionClient(peerStatus);
+                clientStatus.send();
+                logger.debug(String.format("Sent game end signal to client %s.", clientStatus.connectionId));
+                peerStatus.send();
+                logger.debug(String.format("Sent game end signal to client %s.", peerStatus.connectionId));
+                // clean up
+                addGamesHistory(clientStatus.sessionId);
+                removeSession(clientStatus.sessionId);
+                removeClient(clientStatus);
+                removeClient(peerStatus);
+                logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
+                peerStatus.conn.close();
+                clientStatus.conn.close();
+                return;
+            } else { // continue
+                peerStatus.status = "sync"; // update peer status
+                // update client status
+                updateClientStatus(clientStatus);
+                updateClientStatus(peerStatus);
+                // update session status
+                updateSessionClient(clientStatus);
+                updateSessionClient(peerStatus);
+                // then inform peer client
+                peerStatus.send();
+                logger.debug(String.format("Sent sync package to client %s.", peerStatus.connectionId));
+            }
         }
         // case 4: client keepalive. (now auto reset TTL)
         // case 5: client wants to end a game.
@@ -155,6 +211,10 @@ public class SocketServer extends WebSocketServer {
             ClientStatus peerStatus = getPeer(clientStatus);
             peerStatus.status = "terminated";
             // update client status
+            updateClientStatus(clientStatus);
+            updateClientStatus(peerStatus);
+            updateSessionClient(clientStatus);
+            updateSessionClient(peerStatus);
             clientStatus.send();
             logger.debug(String.format("Sent terminate signal to client %s.", clientStatus.connectionId));
             peerStatus.send();
@@ -197,6 +257,9 @@ public class SocketServer extends WebSocketServer {
         newSession.client2 = client2;
         newSession.sessionId = activeSessions.size();
         newSession.sessionToken = UUID.randomUUID().toString();
+
+        client1.isFirstMove = 1;// client1 is default first move
+        client2.isFirstMove = 0;
         client1.peerId = client2.connectionId; // assign peer connection id (not session id or user id)
         client2.peerId = client1.connectionId;
         client1.sessionId = newSession.sessionId;
@@ -206,6 +269,7 @@ public class SocketServer extends WebSocketServer {
         activeSessions.add(newSession);
         return newSession;
     }
+
     boolean checkUser(User user) {
         if (allUsers.size() <= user.id) {
             return false;
@@ -216,6 +280,7 @@ public class SocketServer extends WebSocketServer {
     void addActiveClient(ClientStatus client) {
         activeClients.add(client);
     }
+
     void updateClientStatus(ClientStatus clientStatus) {
         activeClients.set(clientStatus.connectionId, clientStatus);
     }
@@ -227,31 +292,203 @@ public class SocketServer extends WebSocketServer {
     boolean waitingCheck() {
         return waitingPool.size() > 0;
     }
+
     void addWaiting(ClientStatus clientStatus) {
         waitingPool.add(clientStatus);
     }
+
     ClientStatus waitingPoll() {
         return waitingPool.poll();
     }
+
     void addSession(Session session) {
         activeSessions.add(session);
     }
+
     void updateSession(Session session) {
         activeSessions.set(session.sessionId, session);
     }
+
+    void updateSessionClient(ClientStatus clientStatus) {
+        Session session = activeSessions.get(clientStatus.sessionId);
+        if (clientStatus.isFirstMove == 1) {
+            session.client1 = clientStatus;
+        } else {
+            session.client2 = clientStatus;
+        }
+    }
+
     void removeSession(int sessionId) {
         activeSessions.remove(sessionId);
     }
+
     boolean checkSession(ClientStatus clientStatus) {
         if (activeSessions.size() <= clientStatus.sessionId) {
             return false;
         }
         return activeSessions.get(clientStatus.sessionId).sessionToken.equals(clientStatus.sessionToken);
     }
+
     void removeClient(ClientStatus clientStatus) {
         activeClients.remove(clientStatus.connectionId);
     }
+
     void addGamesHistory(int sessionId) {
         allGamesHistory.add(activeSessions.get(sessionId));
+    }
+
+    private int[] get2DCoord(int index) {
+        int[] coord = new int[2];
+        coord[0] = index / 15; // dim0
+        coord[1] = index % 15; // dim1
+        return coord;
+    }
+
+    private int get1DCoord(int dim0, int dim1) {
+        int coord;
+        coord = dim0 * 15 + dim1;
+        return coord;
+    }
+
+    int checkGameEnd(GameObject game, int chaku) {
+        // check if game is ended
+        int[] coord = get2DCoord(chaku);
+        int color = game.chessboard[chaku];
+        int[] steps = {0, 0, 0, 0, 0, 0, 0, 0};
+
+        // right walk through
+        int[] currCoord = {coord[0], coord[1]};
+        for (int step = 0; step < 5; step++) {
+            currCoord[1] = coord[1] + step;
+
+            if (currCoord[1] >= 15) {
+                break;
+            } else if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[0] += 1;
+            } else {
+                break;
+            }
+        }
+        // left walk through
+        currCoord[1] = coord[1];
+        for (int step = 0; step < 5; step++) {
+            currCoord[1] = coord[1] - step;
+
+            if (currCoord[1] < 0) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[4] += 1;
+            } else {
+                break;
+            }
+        }
+        // up walk through
+        currCoord[1] = coord[1];
+        for (int step = 0; step < 5; step++) {
+            currCoord[0] = coord[0] - step;
+
+            if (currCoord[0] < 0) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[2] += 1;
+            } else {
+                break;
+            }
+        }
+        // down walk through
+        currCoord[0] = coord[0];
+        for (int step = 0; step < 5; step++) {
+            currCoord[0] = coord[0] + step;
+
+            if (currCoord[0] >= 15) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[6] += 1;
+            } else {
+                break;
+            }
+        }
+
+        // right-up walk through
+        currCoord[0] = coord[0];
+        for (int step = 0; step < 5; step++) {
+            currCoord[1] = coord[1] + step; // right
+            currCoord[0] = coord[0] - step; // up
+
+            if (currCoord[0] < 0 || currCoord[1] >= 15) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[1] += 1;
+            } else {
+                break;
+            }
+        }
+        // left-down walk through
+        currCoord[0] = coord[0];
+        currCoord[1] = coord[1];
+        for (int step = 0; step < 5; step++) {
+            currCoord[1] = coord[1] - step; // left
+            currCoord[0] = coord[0] + step; // down
+
+            if (currCoord[0] >= 15 || currCoord[1] < 0) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[5] += 1;
+            } else {
+                break;
+            }
+        }
+        // left-up walk through
+        currCoord[0] = coord[0];
+        currCoord[1] = coord[1];
+        for (int step = 0; step < 5; step++) {
+            currCoord[1] = coord[1] - step; // left
+            currCoord[0] = coord[0] - step; // up
+
+            if (currCoord[0] < 0 || currCoord[1] < 0) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[3] += 1;
+            } else {
+                break;
+            }
+        }
+        // right-down walk through
+        currCoord[0] = coord[0];
+        currCoord[1] = coord[1];
+        for (int step = 0; step < 5; step++) {
+            currCoord[1] = coord[1] + step; // right
+            currCoord[0] = coord[0] + step; // down
+
+            if (currCoord[0] >= 15 || currCoord[1] >= 15) {
+                break;
+            }
+            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
+                steps[7] += 1;
+            } else {
+                break;
+            }
+        }
+        logger.debug("steps: " + Arrays.toString(steps));
+        // check sum up
+        if (steps[0] + steps[4] >= 6) {
+            return color;
+        }
+        if (steps[2] + steps[6] >= 6) {
+            return color;
+        }
+        if (steps[1] + steps[5] >= 6) {
+            return color;
+        }
+        if (steps[3] + steps[7] >= 6) {
+            return color;
+        }
+        return -1; // default, continue
     }
 }
