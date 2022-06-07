@@ -10,29 +10,67 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="580daafc-4836-4187-997d-969293058c28" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/gomoku_backend_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/codehaus_jackson_mapper_asl.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/fasterxml_jackson_core.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/fasterxml_jackson_core_annotations.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_9_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_17_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_17_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_slf4j_impl_2_17_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_java_websocket_Java_WebSocket_1_5_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_25.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_jdk14_1_7_36.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/system.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/gomoku_backend_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/gomoku_backend_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/google_code_gson.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/java_websocket_Java_WebSocket.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/slf4j_jdk14.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gomoku-backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/gomoku-backend.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sample/clientHello.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sample/serverHello.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Session.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SocketServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Java-WebSocket-1.5.3-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Java-WebSocket-1.5.3-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Java-WebSocket-1.5.3.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/NOTICE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/RELEASE-NOTES.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/NOTICE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/RELEASE-NOTES.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-1.2-api-2.17.2-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-1.2-api-2.17.2-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-1.2-api-2.17.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-api-2.17.2-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-api-2.17.2-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-api-2.17.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2-tests.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-annotations-2.6.3-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-annotations-2.6.3-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-annotations-2.6.3.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-2.6.4-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-2.6.4-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-2.6.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.13-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.13-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.13.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.9-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.9.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.9-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.9.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.12-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.12-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.12.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.25-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.25-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.25.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-jdk14-1.7.12-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-jdk14-1.7.12-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/slf4j-jdk14-1.7.12.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SocketServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/SocketServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/SocketServer.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +96,13 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="userSettingsFile" value="$USER_HOME$/.m2/settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="2A0Qjpcc5a17e8Us4E8S1PHvEHs" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -79,10 +124,10 @@
     "WebServerToolWindowFactoryState": "false",
     "last_opened_file_path": "/home/merlyn/IdeaProjects/demo",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "模块",
+    "project.structure.last.edited": "工件",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "org.jetbrains.idea.maven.wizards.archetype.MavenCatalogsConfigurable"
+    "settings.editor.selected.configurable": "MavenSettings"
   }
 }]]></component>
   <component name="RunManager" selected="JAR 应用程序.gomoku-backend.jar">
@@ -101,8 +146,40 @@
     </configuration>
     <configuration name="gomoku-backend.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/out/artifacts/gomoku_backend_jar/gomoku-backend.jar" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method v="2" />
     </configuration>
+    <configuration name="Heroku Deploy" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="heroku:deploy-war" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="JAR 应用程序.gomoku-backend.jar" />
+      <item itemvalue="Maven.Heroku Deploy" />
+      <item itemvalue="应用程序.Main" />
+      <item itemvalue="应用程序.Main (1)" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="JAR 应用程序.gomoku-backend.jar" />
@@ -128,7 +205,8 @@
       <workItem from="1654319129204" duration="16107000" />
       <workItem from="1654396099998" duration="22292000" />
       <workItem from="1654444092644" duration="5867000" />
-      <workItem from="1654484658543" duration="24807000" />
+      <workItem from="1654484658543" duration="25763000" />
+      <workItem from="1654581077151" duration="5181000" />
     </task>
     <servers />
   </component>
