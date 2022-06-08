@@ -10,67 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="580daafc-4836-4187-997d-969293058c28" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_9_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_17_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_17_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_slf4j_impl_2_17_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_java_websocket_Java_WebSocket_1_5_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_25.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_jdk14_1_7_36.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/system.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/gomoku_backend_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/gomoku_backend_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/google_code_gson.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/java_websocket_Java_WebSocket.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/slf4j_jdk14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gomoku-backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/gomoku-backend.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Java-WebSocket-1.5.3-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Java-WebSocket-1.5.3-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Java-WebSocket-1.5.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/NOTICE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/RELEASE-NOTES.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/NOTICE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/RELEASE-NOTES.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-1.2-api-2.17.2-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-1.2-api-2.17.2-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-1.2-api-2.17.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-api-2.17.2-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-api-2.17.2-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-api-2.17.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2-tests.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/apache-log4j-2.17.2-bin/log4j-core-2.17.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-annotations-2.6.3-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-annotations-2.6.3-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-annotations-2.6.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-2.6.4-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-2.6.4-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-2.6.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.13-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.13-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.13.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.9-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.9.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.9-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.9.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.12-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.12-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.12.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.25-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.25-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.25.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-jdk14-1.7.12-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-jdk14-1.7.12-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/slf4j-jdk14-1.7.12.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/SocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SocketServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/SocketServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/SocketServer.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +26,12 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
@@ -111,25 +58,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Downloaded.Files.Path.Enabled": "true",
-    "Repository.Attach.Annotations": "true",
-    "Repository.Attach.JavaDocs": "true",
-    "Repository.Attach.Sources": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/merlyn/IdeaProjects/demo",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "工件",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "MavenSettings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;true&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;true&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;true&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/merlyn/IdeaProjects/demo&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;工件&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="JAR 应用程序.gomoku-backend.jar">
     <configuration name="Main (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -206,8 +153,24 @@
       <workItem from="1654396099998" duration="22292000" />
       <workItem from="1654444092644" duration="5867000" />
       <workItem from="1654484658543" duration="25763000" />
-      <workItem from="1654581077151" duration="5181000" />
+      <workItem from="1654581077151" duration="5413000" />
+      <workItem from="1654684073319" duration="2423000" />
     </task>
+    <task id="LOCAL-00001" summary="Update: Changed project builder to maven.">
+      <created>1654601459233</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1654601459233</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;system.properties">
+      <created>1654601560016</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1654601560016</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -215,6 +178,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Update: Changed project builder to maven." />
+    <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;system.properties" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;system.properties" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
