@@ -1,4 +1,4 @@
-#Gomoku
+# Gomoku
 
 一个为gomoku-vue开发的联机五子棋Java后端。
 
