@@ -1,10 +1,14 @@
+import org.apache.logging.log4j.core.util.FileUtils;
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import java.io.*;
 import java.util.*;
 import java.net.InetSocketAddress;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +35,52 @@ public class SocketServer extends WebSocketServer {
 
     public SocketServer(int port, Draft_6455 draft) {
         super(new InetSocketAddress(port), Collections.singletonList(draft));
+    }
+
+    public String toString() {
+        return new Gson().toJson(this);
+    }
+
+    public void saveToFile(String path) throws IOException {
+        String self = this.toString();
+        logger.debug("Saving to file: " + path);
+        File config = new File(path);
+        OutputStream s;
+        try {
+            s = new FileOutputStream(config);
+        } catch (FileNotFoundException e) {
+            logger.error("File not found: " + path);
+            throw e;
+        }
+        try {
+            s.write(self.getBytes());
+        } catch (IOException e) {
+            logger.error("IOException: " + e.getMessage());
+            throw e;
+        }
+        // TODO to be complemented.
+    }
+
+    public static SocketServer loadFromFile(String path) {
+        byte[] buffer = new byte[]{};
+        logger.debug("Loading from file: " + path);
+        File config = new File(path);InputStream s;
+        try {
+            s = new FileInputStream(config);
+        } catch (FileNotFoundException e) {
+            logger.error("File not found: " + path);
+            throw new RuntimeException(e);
+        }
+        try {
+            s.read(buffer);
+        } catch (IOException e) {
+            logger.error("IOException: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        String self = new String(buffer);
+        return new Gson().fromJson(self, SocketServer.class);
+
+        // TODO to be complemented.
     }
 
     /*  The server opens a new websocket connection and send server hello.
@@ -141,8 +191,11 @@ public class SocketServer extends WebSocketServer {
 
             if (win == 1) { // black win
                 blackStatus.status = "win";
+                blackStatus.user.score += 1;
+                updateUser(blackStatus.user);
                 whiteStatus.status = "lose";
                 logger.info(String.format("Black client %d wins in session %s.", blackStatus.connectionId, blackStatus.sessionId));
+                logger.info(String.format("User %s id %d score updated, currently %d", blackStatus.user.name, blackStatus.user.id, blackStatus.user.score));
                 // end game
                 updateClientStatus(clientStatus);
                 updateClientStatus(peerStatus);
@@ -165,7 +218,10 @@ public class SocketServer extends WebSocketServer {
             } else if (win == 0) { // white win
                 blackStatus.status = "lose";
                 whiteStatus.status = "win";
+                whiteStatus.user.score += 1;
+                updateUser(whiteStatus.user);
                 logger.info(String.format("White client %d wins in session %s.", whiteStatus.connectionId, whiteStatus.sessionId));
+                logger.info(String.format("User %s id %d score updated, currently %d", whiteStatus.user.name, whiteStatus.user.id, whiteStatus.user.score));
                 // end game
                 updateClientStatus(clientStatus);
                 updateClientStatus(peerStatus);
@@ -215,6 +271,7 @@ public class SocketServer extends WebSocketServer {
             updateClientStatus(peerStatus);
             updateSessionClient(clientStatus);
             updateSessionClient(peerStatus);
+            // send
             clientStatus.send();
             logger.debug(String.format("Sent terminate signal to client %s.", clientStatus.connectionId));
             peerStatus.send();
@@ -270,46 +327,50 @@ public class SocketServer extends WebSocketServer {
         return newSession;
     }
 
-    boolean checkUser(User user) {
+    private boolean checkUser(User user) {
         if (allUsers.size() <= user.id) {
             return false;
         }
         return allUsers.get(user.id).token.equals(user.token);
     }
 
-    void addActiveClient(ClientStatus client) {
+    private void updateUser(User user) {
+        allUsers.set(user.id, user);
+    }
+
+    private void addActiveClient(ClientStatus client) {
         activeClients.add(client);
     }
 
-    void updateClientStatus(ClientStatus clientStatus) {
+    private void updateClientStatus(ClientStatus clientStatus) {
         activeClients.set(clientStatus.connectionId, clientStatus);
     }
 
-    ClientStatus getPeer(ClientStatus clientStatus) {
+    private ClientStatus getPeer(ClientStatus clientStatus) {
         return activeClients.get(clientStatus.peerId);
     }
 
-    boolean waitingCheck() {
+    private boolean waitingCheck() {
         return waitingPool.size() > 0;
     }
 
-    void addWaiting(ClientStatus clientStatus) {
+    private void addWaiting(ClientStatus clientStatus) {
         waitingPool.add(clientStatus);
     }
 
-    ClientStatus waitingPoll() {
+    private ClientStatus waitingPoll() {
         return waitingPool.poll();
     }
 
-    void addSession(Session session) {
+    private void addSession(Session session) {
         activeSessions.add(session);
     }
 
-    void updateSession(Session session) {
+    private void updateSession(Session session) {
         activeSessions.set(session.sessionId, session);
     }
 
-    void updateSessionClient(ClientStatus clientStatus) {
+    private void updateSessionClient(ClientStatus clientStatus) {
         Session session = activeSessions.get(clientStatus.sessionId);
         if (clientStatus.isFirstMove == 1) {
             session.client1 = clientStatus;
@@ -318,22 +379,23 @@ public class SocketServer extends WebSocketServer {
         }
     }
 
-    void removeSession(int sessionId) {
+
+    private void removeSession(int sessionId) {
         activeSessions.remove(sessionId);
     }
 
-    boolean checkSession(ClientStatus clientStatus) {
+    private boolean checkSession(ClientStatus clientStatus) {
         if (activeSessions.size() <= clientStatus.sessionId) {
             return false;
         }
         return activeSessions.get(clientStatus.sessionId).sessionToken.equals(clientStatus.sessionToken);
     }
 
-    void removeClient(ClientStatus clientStatus) {
+    private void removeClient(ClientStatus clientStatus) {
         activeClients.remove(clientStatus.connectionId);
     }
 
-    void addGamesHistory(int sessionId) {
+    private void addGamesHistory(int sessionId) {
         allGamesHistory.add(activeSessions.get(sessionId));
     }
 
@@ -349,6 +411,7 @@ public class SocketServer extends WebSocketServer {
         coord = dim0 * 15 + dim1;
         return coord;
     }
+
 
     int checkGameEnd(GameObject game, int chaku) {
         // check if game is ended

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
     public static void main(String[] args) throws IOException {
+        // TODO fix the config error.
         System.setProperties(new Properties() {
             {
                 setProperty("log4j.configurationFile", "log4j2.xml");
