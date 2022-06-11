@@ -6,6 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for gomoku-backend" enabled="true">
+        <sourceOutputDir name="../../../../home/merlyn/IdeaProjects/gomoku/gomoku-backend/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../home/merlyn/IdeaProjects/gomoku/gomoku-backend/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
         <module name="gomoku-backend" />
       </profile>
     </annotationProcessing>

@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="gomoku-backend:war">
+    <output-path>$PROJECT_DIR$/../../../../home/merlyn/IdeaProjects/gomoku/gomoku-backend/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>gomoku-backend</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="gomoku-backend-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="gomoku-backend:war exploded" />
+    </root>
+  </artifact>
+</component>

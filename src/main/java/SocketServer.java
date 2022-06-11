@@ -5,6 +5,8 @@ import org.java_websocket.server.WebSocketServer;
 
 import java.util.*;
 import java.net.InetSocketAddress;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
@@ -350,145 +352,82 @@ public class SocketServer extends WebSocketServer {
         return coord;
     }
 
+
     int checkGameEnd(GameObject game, int chaku) {
         // check if game is ended
         int[] coord = get2DCoord(chaku);
         int color = game.chessboard[chaku];
-        int[] steps = {0, 0, 0, 0, 0, 0, 0, 0};
-
-        // right walk through
+//        int[] steps = {0, 0, 0, 0, 0, 0, 0, 0};
+        int[] steps = {0, 0};
         int[] currCoord = {coord[0], coord[1]};
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] + step;
-
-            if (currCoord[1] >= 15) {
-                break;
-            } else if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[0] += 1;
-            } else {
-                break;
+        Consumer<int[]> stepNext = (int[] d) -> {
+            currCoord[0] = coord[0] + d[0];
+            currCoord[1] = coord[1] + d[1];
+        };
+        Runnable reset = () -> {
+            currCoord[0] = coord[0];
+            currCoord[1] = coord[1];
+        };
+        Function<int[], Boolean> checkOutOfRange = (int[] c) -> (c[1] >= 15 || c[1] < 0 || c[0] >= 15 || c[0] < 0);
+        Function<int[], Boolean> checkWinAndHighlighten = (int[] s) -> {
+            logger.debug(String.format("Direction (%d,%d) steps (%d,%d).", s[0], s[1], steps[0], steps[1]));
+            if (steps[0] + steps[1] >= 6) {
+                // highlight them
+                currCoord[0] = currCoord[0] + s[0] * (steps[0] - 1); // -1 because steps is counting the center one
+                currCoord[1] = currCoord[1] + s[1] * (steps[1] - 1);
+                int[] retro = {-s[0], -s[1]};
+                for (int i = 1; i < steps[0] + steps[1]; ++i) {
+                    game.chessboard[get1DCoord(currCoord[0], currCoord[1])] = 2; // mark as highlight
+                    stepNext.accept(retro);
+                }
+                return true;
+            } else return false;
+        };
+        Consumer<int[]> walkThrough = (int[] s) -> {
+            steps[0] = 0;
+            for (int step = 1; step <= 5; step++) {
+                if (checkOutOfRange.apply(currCoord) || (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] != color)) {
+                    System.out.println(checkOutOfRange.apply(currCoord));
+                    System.out.println(game.chessboard[get1DCoord(currCoord[0], currCoord[1])] != color);
+                    break;
+                }
+                steps[0] ++;
+                stepNext.accept(s); // make a move
             }
-        }
-        // left walk through
-        currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] - step;
-
-            if (currCoord[1] < 0) {
-                break;
+            // retro walk through
+            int[] retro = {-s[0], -s[1]};
+            steps[1] = 0;
+            reset.run(); // reset to center
+            for (int step = 1; step <= 5; step++) {
+                if (checkOutOfRange.apply(currCoord) || (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] != color)) {
+                    System.out.println(checkOutOfRange.apply(currCoord));
+                    System.out.println(game.chessboard[get1DCoord(currCoord[0], currCoord[1])] != color);
+                    break;
+                }
+                steps[1] ++;
+                stepNext.accept(retro); // make a retro move
             }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[4] += 1;
-            } else {
-                break;
-            }
-        }
-        // up walk through
-        currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[0] = coord[0] - step;
-
-            if (currCoord[0] < 0) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[2] += 1;
-            } else {
-                break;
-            }
-        }
-        // down walk through
-        currCoord[0] = coord[0];
-        for (int step = 0; step < 5; step++) {
-            currCoord[0] = coord[0] + step;
-
-            if (currCoord[0] >= 15) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[6] += 1;
-            } else {
-                break;
-            }
-        }
-
-        // right-up walk through
-        currCoord[0] = coord[0];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] + step; // right
-            currCoord[0] = coord[0] - step; // up
-
-            if (currCoord[0] < 0 || currCoord[1] >= 15) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[1] += 1;
-            } else {
-                break;
-            }
-        }
-        // left-down walk through
-        currCoord[0] = coord[0];
-        currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] - step; // left
-            currCoord[0] = coord[0] + step; // down
-
-            if (currCoord[0] >= 15 || currCoord[1] < 0) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[5] += 1;
-            } else {
-                break;
-            }
-        }
-        // left-up walk through
-        currCoord[0] = coord[0];
-        currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] - step; // left
-            currCoord[0] = coord[0] - step; // up
-
-            if (currCoord[0] < 0 || currCoord[1] < 0) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[3] += 1;
-            } else {
-                break;
-            }
-        }
-        // right-down walk through
-        currCoord[0] = coord[0];
-        currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] + step; // right
-            currCoord[0] = coord[0] + step; // down
-
-            if (currCoord[0] >= 15 || currCoord[1] >= 15) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[7] += 1;
-            } else {
-                break;
-            }
-        }
-        logger.debug("steps: " + Arrays.toString(steps));
-        // check sum up
-        if (steps[0] + steps[4] >= 6) {
+        };
+        // horizontal check
+        walkThrough.accept(new int[]{0, 1});
+        if (checkWinAndHighlighten.apply(new int[]{0, 1})) {
             return color;
         }
-        if (steps[2] + steps[6] >= 6) {
+        // vertical walk through
+        walkThrough.accept(new int[]{-1, 0});
+        if (checkWinAndHighlighten.apply(new int[]{-1, 0})) {
             return color;
         }
-        if (steps[1] + steps[5] >= 6) {
+        // anti-diagonal walk through
+        walkThrough.accept(new int[]{-1, 1});
+        if (checkWinAndHighlighten.apply(new int[]{-1, 1})) {
             return color;
         }
-        if (steps[3] + steps[7] >= 6) {
+        // diagonal walk through
+        walkThrough.accept(new int[]{-1, -1});
+        if (checkWinAndHighlighten.apply(new int[]{-1, -1})) {
             return color;
         }
-        return -1; // default, continue
+        return -1; // by default, continue
     }
 }
