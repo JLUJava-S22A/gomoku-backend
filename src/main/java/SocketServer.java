@@ -59,25 +59,25 @@ public class SocketServer extends WebSocketServer {
         FileOutputStream s;
         try {
             s = new FileOutputStream(usersConfigFile);
-        } catch (FileNotFoundException var12) {
+        } catch (FileNotFoundException e) {
             logger.error("File not found: " + userConfigPath);
-            throw var12;
+            throw e;
         }
 
         try {
             s.write(usersConfig.getBytes());
-        } catch (IOException var11) {
-            logger.error("IOException: " + var11.getMessage());
-            throw var11;
+        } catch (IOException e) {
+            logger.error("IOException: " + e.getMessage());
+            throw e;
         }
 
         s.close();
 
         try {
             s = new FileOutputStream(gameHistorySaveFile);
-        } catch (FileNotFoundException var10) {
+        } catch (FileNotFoundException e) {
             logger.error("File not found: " + gameHistorySavePath);
-            throw var10;
+            throw e;
         }
 
         try {
@@ -103,23 +103,23 @@ public class SocketServer extends WebSocketServer {
         FileInputStream s;
         try {
             s = new FileInputStream(usersConfigFile);
-        } catch (FileNotFoundException var12) {
+        } catch (FileNotFoundException e) {
             logger.error("File not found: " + userConfigPath);
-            throw new RuntimeException(var12);
+            throw new RuntimeException(e);
         }
 
         try {
             allUsers = (List)(new Gson()).fromJson(new String(s.readAllBytes()), allUsers.getClass());
-        } catch (IOException var11) {
-            logger.error("IOException: " + var11.getMessage());
-            throw new RuntimeException(var11);
+        } catch (IOException e) {
+            logger.error("IOException: " + e.getMessage());
+            throw new RuntimeException(e);
         }
 
         try {
             s = new FileInputStream(gameHistorySaveFile);
-        } catch (FileNotFoundException var10) {
+        } catch (FileNotFoundException e) {
             logger.error("File not found: " + gameHistorySavePath);
-            throw new RuntimeException(var10);
+            throw new RuntimeException(e);
         }
 
         try {
@@ -287,7 +287,6 @@ public class SocketServer extends WebSocketServer {
         int[] steps = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
         int[] currCoord = new int[]{coord[0], coord[1]};
 
-        int var10002;
         int step;
         for(step = 0; step < 5; ++step) {
             currCoord[1] = coord[1] + step;
@@ -295,7 +294,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[0]++;
+            steps[0]++;
         }
 
         currCoord[1] = coord[1];
@@ -306,7 +305,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[4]++;
+            steps[4]++;
         }
 
         currCoord[1] = coord[1];
@@ -317,7 +316,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[2]++;
+            steps[2]++;
         }
 
         currCoord[0] = coord[0];
@@ -328,7 +327,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[6]++;
+            steps[6]++;
         }
 
         currCoord[0] = coord[0];
@@ -340,7 +339,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[1]++;
+            steps[1]++;
         }
 
         currCoord[0] = coord[0];
@@ -353,7 +352,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[5]++;
+            steps[5]++;
         }
 
         currCoord[0] = coord[0];
@@ -366,7 +365,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[3]++;
+            steps[3]++;
         }
 
         currCoord[0] = coord[0];
@@ -379,7 +378,7 @@ public class SocketServer extends WebSocketServer {
                 break;
             }
 
-            var10002 = steps[7]++;
+            steps[7]++;
         }
 
         logger.debug("steps: " + Arrays.toString(steps));
