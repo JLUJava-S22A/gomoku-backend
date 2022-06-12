@@ -1,30 +1,35 @@
-import org.apache.logging.log4j.core.util.FileUtils;
+
+
+import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
-import java.io.*;
-import java.util.*;
-import java.net.InetSocketAddress;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import com.google.gson.Gson;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-
 public class SocketServer extends WebSocketServer {
-
-    public static Queue<ClientStatus> waitingPool = new LinkedList<>();
-    public static List<Session> activeSessions = new ArrayList<>(); // all active sessions
-    public static List<ClientStatus> activeClients = new ArrayList<>(); // all clients status
-    public static List<User> allUsers = new ArrayList<>(); // user list
-    public static List<Session> allGamesHistory = new ArrayList<>(); // all games history
+    public static Queue<ClientStatus> waitingPool = new LinkedList();
+    public static List<Session> activeSessions = new ArrayList();
+    public static List<ClientStatus> activeClients = new ArrayList();
+    public static List<User> allUsers = new ArrayList();
+    public static List<Session> allGamesHistory = new ArrayList();
     private static final Logger logger = LogManager.getLogger(Main.class.getName());
 
-    // Construction functions.
     public SocketServer(int port) {
         super(new InetSocketAddress(port));
     }
@@ -38,261 +43,137 @@ public class SocketServer extends WebSocketServer {
     }
 
     public String toString() {
-        return new Gson().toJson(this);
+        return (new Gson()).toJson(this);
     }
 
-    public void saveToFile(String path) throws IOException {
-        String self = this.toString();
-        logger.debug("Saving to file: " + path);
-        File config = new File(path);
-        OutputStream s;
+    public void saveToFile() throws IOException {
+        String userConfigPath = System.getProperty("userConfig");
+        String gameHistorySavePath = System.getProperty("gameHistorySave");
+        String usersConfig = (new Gson()).toJson(allUsers);
+        String gamesHistorySave = (new Gson()).toJson(allGamesHistory);
+        logger.debug("Saving to file: " + userConfigPath);
+        logger.debug("Saving to file: " + gameHistorySavePath);
+        File usersConfigFile = new File(userConfigPath);
+        File gameHistorySaveFile = new File(gameHistorySavePath);
+
+        FileOutputStream s;
         try {
-            s = new FileOutputStream(config);
-        } catch (FileNotFoundException e) {
-            logger.error("File not found: " + path);
-            throw e;
+            s = new FileOutputStream(usersConfigFile);
+        } catch (FileNotFoundException var12) {
+            logger.error("File not found: " + userConfigPath);
+            throw var12;
         }
+
         try {
-            s.write(self.getBytes());
-        } catch (IOException e) {
-            logger.error("IOException: " + e.getMessage());
-            throw e;
+            s.write(usersConfig.getBytes());
+        } catch (IOException var11) {
+            logger.error("IOException: " + var11.getMessage());
+            throw var11;
         }
-        // TODO to be complemented.
+
+        s.close();
+
+        try {
+            s = new FileOutputStream(gameHistorySaveFile);
+        } catch (FileNotFoundException var10) {
+            logger.error("File not found: " + gameHistorySavePath);
+            throw var10;
+        }
+
+        try {
+            s.write(gamesHistorySave.getBytes());
+        } catch (IOException var9) {
+            logger.error("IOException: " + var9.getMessage());
+            throw var9;
+        }
+
+        s.close();
     }
 
-    public static SocketServer loadFromFile(String path) {
-        byte[] buffer = new byte[]{};
-        logger.debug("Loading from file: " + path);
-        File config = new File(path);InputStream s;
-        try {
-            s = new FileInputStream(config);
-        } catch (FileNotFoundException e) {
-            logger.error("File not found: " + path);
-            throw new RuntimeException(e);
-        }
-        try {
-            s.read(buffer);
-        } catch (IOException e) {
-            logger.error("IOException: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        String self = new String(buffer);
-        return new Gson().fromJson(self, SocketServer.class);
+    public void loadFromFile() {
+        String userConfigPath = System.getProperty("userConfig");
+        String gameHistorySavePath = System.getProperty("gameHistorySave");
+        String usersConfig = (new Gson()).toJson(allUsers);
+        String gamesHistorySave = (new Gson()).toJson(allGamesHistory);
+        logger.debug("Loading from file: " + userConfigPath);
+        logger.debug("Loading from file: " + gameHistorySavePath);
+        File usersConfigFile = new File(userConfigPath);
+        File gameHistorySaveFile = new File(gameHistorySavePath);
 
-        // TODO to be complemented.
+        FileInputStream s;
+        try {
+            s = new FileInputStream(usersConfigFile);
+        } catch (FileNotFoundException var12) {
+            logger.error("File not found: " + userConfigPath);
+            throw new RuntimeException(var12);
+        }
+
+        try {
+            allUsers = (List)(new Gson()).fromJson(new String(s.readAllBytes()), allUsers.getClass());
+        } catch (IOException var11) {
+            logger.error("IOException: " + var11.getMessage());
+            throw new RuntimeException(var11);
+        }
+
+        try {
+            s = new FileInputStream(gameHistorySaveFile);
+        } catch (FileNotFoundException var10) {
+            logger.error("File not found: " + gameHistorySavePath);
+            throw new RuntimeException(var10);
+        }
+
+        try {
+            allGamesHistory = (List)(new Gson()).fromJson(new String(s.readAllBytes()), allGamesHistory.getClass());
+        } catch (IOException var9) {
+            logger.error("IOException: " + var9.getMessage());
+            throw new RuntimeException(var9);
+        }
     }
 
-    /*  The server opens a new websocket connection and send server hello.
-     *   Generally do nothing important, just wait for message to income.
-     * */
-    @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         logger.info(String.format("Received connection from. %s", conn.getRemoteSocketAddress()));
         ClientStatus clientStatus = new ClientStatus();
-        // assign new connectionId to clientStatus and append it to activeClients
         clientStatus.conn = conn;
         clientStatus.connectionId = activeClients.size();
         clientStatus.status = "online";
-        addActiveClient(clientStatus);
-        // send sessionId to client
+        this.addActiveClient(clientStatus);
         clientStatus.send();
         logger.debug(String.format("Sent connection id to client. %s", clientStatus.connectionId));
     }
 
-    /*  Do cleaning when socket closes.
-     * */
-    @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         conn.close();
         logger.info(String.format("Connection closed. Reason: %s", reason));
     }
 
-    /*  CORE METHOD
-     *   Make response to client messages.
-     * */
-    @Override
     public void onMessage(WebSocket conn, String message) {
         logger.debug(String.format("Received message from %s: %s", conn.getRemoteSocketAddress(), message));
         ClientStatus clientStatus = ClientStatus.fromJson(message);
         logger.debug(String.format("Built object %s", clientStatus));
         logger.debug(String.format("Client %d status: %s", clientStatus.connectionId, clientStatus.status));
         clientStatus.conn = conn;
-        // TODO: Handle message from client.
-        // case 1: client wants to register.
         if (clientStatus.status.equals("register")) {
-            String userName = clientStatus.user.name;
-            String userPassword = clientStatus.user.token;
-            logger.debug(String.format("Client %d wants to register with name %s and password %s.", clientStatus.connectionId, userName, userPassword));
-            User newUser = this.register(userName, userPassword);
-            logger.debug(String.format("Registered userId %d", newUser.id));
-            //update client status
-            clientStatus.user = newUser;
-            clientStatus.status = "registered"; // set next step
-            updateClientStatus(clientStatus);
-            // send user id to client
-            clientStatus.send();
-            logger.debug(String.format("Sent user id to client %s.", clientStatus.user.id));
-            return;
+            this.clientRegister(clientStatus);
         }
-        // case 2:client wants to log in.
-        if (clientStatus.status.equals("login")) {
-            logger.debug(String.format("Client %d trying to login with name %s userId %s and password %s.", clientStatus.connectionId, clientStatus.user.name, clientStatus.user.id, clientStatus.user.token));
-            // check username and password
-            if (!checkUser(clientStatus.user)) {
-                logger.debug(String.format("Client %d login failed.", clientStatus.connectionId));
-                clientStatus.status = "loginFailed";
-                updateClientStatus(clientStatus);
-                clientStatus.send(); // failed, send back to client
-            }//passed
-            // check waiting pool
-            if (!waitingCheck()) {
-                // no peer found, assign user to waiting pool
-                // then stop do nothing further
-                addWaiting(clientStatus);
-                logger.debug(String.format("Client %d is waiting for peer.", clientStatus.connectionId));
-                // client wait for server to inform
-                return;
-            } // else found peer, assign a new session
-            ClientStatus peerStatus = waitingPoll();
-            clientStatus.status = "loggedIn";
-            peerStatus.status = "loggedIn";
-            // create new session
-            Session session = assignSession(peerStatus, clientStatus);
-            logger.debug(String.format("Client %d and %d are assigned to session %d with sessionToken %s.", clientStatus.connectionId, peerStatus.connectionId, session.sessionId, session.sessionToken));
-            // update client status
-            updateClientStatus(clientStatus);
-            updateClientStatus(peerStatus);
-            // update session status
-            addSession(session);
-            // then inform both clients
-            clientStatus.send();
-            logger.debug(String.format("Sent game start signal to client %s.", clientStatus.connectionId));
-            peerStatus.send();
-            logger.debug(String.format("Sent game start signal to client %s.", peerStatus.connectionId));
-            // then clients should start game and keep alive
-        }
-        // case 3: client syncs with server.
-        if (clientStatus.status.equals("sync")) {
-            logger.debug(String.format("Client %d syncs with server.", clientStatus.connectionId));
-            // check session token
-            if (!checkSession(clientStatus)) {
-                logger.debug(String.format("Client %d syncs failed.", clientStatus.connectionId));
-                clientStatus.status = "syncFailed";
-                updateClientStatus(clientStatus);
-                clientStatus.send(); // failed, send back to client
-            }//passed
-            ClientStatus peerStatus = getPeer(clientStatus);
-            peerStatus.game = clientStatus.game; // update peer game
-            // check game end
-            int win = checkGameEnd(clientStatus.game, clientStatus.chakuIndex);
-            ClientStatus whiteStatus = clientStatus.isFirstMove == 0 ? clientStatus : peerStatus;
-            ClientStatus blackStatus = peerStatus.isFirstMove == 1 ? peerStatus : clientStatus;
 
-            if (win == 1) { // black win
-                blackStatus.status = "win";
-                blackStatus.user.score += 1;
-                updateUser(blackStatus.user);
-                whiteStatus.status = "lose";
-                logger.info(String.format("Black client %d wins in session %s.", blackStatus.connectionId, blackStatus.sessionId));
-                logger.info(String.format("User %s id %d score updated, currently %d", blackStatus.user.name, blackStatus.user.id, blackStatus.user.score));
-                // end game
-                updateClientStatus(clientStatus);
-                updateClientStatus(peerStatus);
-                // update session status
-                updateSessionClient(clientStatus);
-                updateSessionClient(peerStatus);
-                clientStatus.send();
-                logger.debug(String.format("Sent game end signal to client %s.", clientStatus.connectionId));
-                peerStatus.send();
-                logger.debug(String.format("Sent game end signal to client %s.", peerStatus.connectionId));
-                // clean up
-                addGamesHistory(clientStatus.sessionId);
-                removeSession(clientStatus.sessionId);
-                removeClient(clientStatus);
-                removeClient(peerStatus);
-                logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
-                peerStatus.conn.close();
-                clientStatus.conn.close();
-                return;
-            } else if (win == 0) { // white win
-                blackStatus.status = "lose";
-                whiteStatus.status = "win";
-                whiteStatus.user.score += 1;
-                updateUser(whiteStatus.user);
-                logger.info(String.format("White client %d wins in session %s.", whiteStatus.connectionId, whiteStatus.sessionId));
-                logger.info(String.format("User %s id %d score updated, currently %d", whiteStatus.user.name, whiteStatus.user.id, whiteStatus.user.score));
-                // end game
-                updateClientStatus(clientStatus);
-                updateClientStatus(peerStatus);
-                // update session status
-                updateSessionClient(clientStatus);
-                updateSessionClient(peerStatus);
-                clientStatus.send();
-                logger.debug(String.format("Sent game end signal to client %s.", clientStatus.connectionId));
-                peerStatus.send();
-                logger.debug(String.format("Sent game end signal to client %s.", peerStatus.connectionId));
-                // clean up
-                addGamesHistory(clientStatus.sessionId);
-                removeSession(clientStatus.sessionId);
-                removeClient(clientStatus);
-                removeClient(peerStatus);
-                logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
-                peerStatus.conn.close();
-                clientStatus.conn.close();
-                return;
-            } else { // continue
-                peerStatus.status = "sync"; // update peer status
-                // update client status
-                updateClientStatus(clientStatus);
-                updateClientStatus(peerStatus);
-                // update session status
-                updateSessionClient(clientStatus);
-                updateSessionClient(peerStatus);
-                // then inform peer client
-                peerStatus.send();
-                logger.debug(String.format("Sent sync package to client %s.", peerStatus.connectionId));
-            }
+        if (clientStatus.status.equals("login")) {
+            this.clientLogin(clientStatus);
         }
-        // case 4: client keepalive. (now auto reset TTL)
-        // case 5: client wants to end a game.
+
+        if (clientStatus.status.equals("sync")) {
+            this.sync(clientStatus);
+        }
+
         if (clientStatus.status.equals("term")) {
-            logger.debug(String.format("Client %d wants to end a game.", clientStatus.connectionId));
-            // check session token
-            if (!checkSession(clientStatus)) {
-                logger.debug(String.format("Client %d terminate game failed.", clientStatus.connectionId));
-                // do not reply
-            }//passed
-            clientStatus.status = "terminated";
-            ClientStatus peerStatus = getPeer(clientStatus);
-            peerStatus.status = "terminated";
-            // update client status
-            updateClientStatus(clientStatus);
-            updateClientStatus(peerStatus);
-            updateSessionClient(clientStatus);
-            updateSessionClient(peerStatus);
-            // send
-            clientStatus.send();
-            logger.debug(String.format("Sent terminate signal to client %s.", clientStatus.connectionId));
-            peerStatus.send();
-            logger.debug(String.format("Sent terminate signal to client %s.", peerStatus.connectionId));
-            // clean up
-            addGamesHistory(clientStatus.sessionId);
-            removeSession(clientStatus.sessionId);
-            removeClient(clientStatus);
-            removeClient(peerStatus);
-            logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
-            peerStatus.conn.close();
-            clientStatus.conn.close();
+            this.terminateGame(clientStatus, conn);
         }
+
     }
 
-    @Override
     public void onError(WebSocket conn, Exception ex) {
         logger.error(String.format("Socket from %s occurred an error: %s", conn.getRemoteSocketAddress(), ex.getMessage()));
     }
 
-    @Override
     public void onStart() {
         logger.info("Server started.");
     }
@@ -301,9 +182,7 @@ public class SocketServer extends WebSocketServer {
         User newUser = new User();
         newUser.name = userName;
         newUser.token = userPassword;
-        // assign user id
         newUser.id = allUsers.size();
-        // add to users list
         allUsers.add(newUser);
         return newUser;
     }
@@ -314,10 +193,9 @@ public class SocketServer extends WebSocketServer {
         newSession.client2 = client2;
         newSession.sessionId = activeSessions.size();
         newSession.sessionToken = UUID.randomUUID().toString();
-
-        client1.isFirstMove = 1;// client1 is default first move
+        client1.isFirstMove = 1;
         client2.isFirstMove = 0;
-        client1.peerId = client2.connectionId; // assign peer connection id (not session id or user id)
+        client1.peerId = client2.connectionId;
         client2.peerId = client1.connectionId;
         client1.sessionId = newSession.sessionId;
         client2.sessionId = newSession.sessionId;
@@ -328,10 +206,7 @@ public class SocketServer extends WebSocketServer {
     }
 
     private boolean checkUser(User user) {
-        if (allUsers.size() <= user.id) {
-            return false;
-        }
-        return allUsers.get(user.id).token.equals(user.token);
+        return allUsers.size() <= user.id ? false : ((User)allUsers.get(user.id)).token.equals(user.token);
     }
 
     private void updateUser(User user) {
@@ -347,7 +222,7 @@ public class SocketServer extends WebSocketServer {
     }
 
     private ClientStatus getPeer(ClientStatus clientStatus) {
-        return activeClients.get(clientStatus.peerId);
+        return (ClientStatus)activeClients.get(clientStatus.peerId);
     }
 
     private boolean waitingCheck() {
@@ -359,7 +234,7 @@ public class SocketServer extends WebSocketServer {
     }
 
     private ClientStatus waitingPoll() {
-        return waitingPool.poll();
+        return (ClientStatus)waitingPool.poll();
     }
 
     private void addSession(Session session) {
@@ -371,24 +246,21 @@ public class SocketServer extends WebSocketServer {
     }
 
     private void updateSessionClient(ClientStatus clientStatus) {
-        Session session = activeSessions.get(clientStatus.sessionId);
+        Session session = (Session)activeSessions.get(clientStatus.sessionId);
         if (clientStatus.isFirstMove == 1) {
             session.client1 = clientStatus;
         } else {
             session.client2 = clientStatus;
         }
-    }
 
+    }
 
     private void removeSession(int sessionId) {
         activeSessions.remove(sessionId);
     }
 
     private boolean checkSession(ClientStatus clientStatus) {
-        if (activeSessions.size() <= clientStatus.sessionId) {
-            return false;
-        }
-        return activeSessions.get(clientStatus.sessionId).sessionToken.equals(clientStatus.sessionToken);
+        return activeSessions.size() <= clientStatus.sessionId ? false : ((Session)activeSessions.get(clientStatus.sessionId)).sessionToken.equals(clientStatus.sessionToken);
     }
 
     private void removeClient(ClientStatus clientStatus) {
@@ -396,162 +268,278 @@ public class SocketServer extends WebSocketServer {
     }
 
     private void addGamesHistory(int sessionId) {
-        allGamesHistory.add(activeSessions.get(sessionId));
+        allGamesHistory.add((Session)activeSessions.get(sessionId));
     }
 
     private int[] get2DCoord(int index) {
-        int[] coord = new int[2];
-        coord[0] = index / 15; // dim0
-        coord[1] = index % 15; // dim1
+        int[] coord = new int[]{index / 15, index % 15};
         return coord;
     }
 
     private int get1DCoord(int dim0, int dim1) {
-        int coord;
-        coord = dim0 * 15 + dim1;
+        int coord = dim0 * 15 + dim1;
         return coord;
     }
 
-
     int checkGameEnd(GameObject game, int chaku) {
-        // check if game is ended
-        int[] coord = get2DCoord(chaku);
+        int[] coord = this.get2DCoord(chaku);
         int color = game.chessboard[chaku];
-        int[] steps = {0, 0, 0, 0, 0, 0, 0, 0};
+        int[] steps = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+        int[] currCoord = new int[]{coord[0], coord[1]};
 
-        // right walk through
-        int[] currCoord = {coord[0], coord[1]};
-        for (int step = 0; step < 5; step++) {
+        int var10002;
+        int step;
+        for(step = 0; step < 5; ++step) {
             currCoord[1] = coord[1] + step;
-
-            if (currCoord[1] >= 15) {
-                break;
-            } else if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[0] += 1;
-            } else {
+            if (currCoord[1] >= 15 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
                 break;
             }
+
+            var10002 = steps[0]++;
         }
-        // left walk through
+
         currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
+
+        for(step = 0; step < 5; ++step) {
             currCoord[1] = coord[1] - step;
+            if (currCoord[1] < 0 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
+                break;
+            }
 
-            if (currCoord[1] < 0) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[4] += 1;
-            } else {
-                break;
-            }
+            var10002 = steps[4]++;
         }
-        // up walk through
+
         currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
+
+        for(step = 0; step < 5; ++step) {
             currCoord[0] = coord[0] - step;
+            if (currCoord[0] < 0 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
+                break;
+            }
 
-            if (currCoord[0] < 0) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[2] += 1;
-            } else {
-                break;
-            }
+            var10002 = steps[2]++;
         }
-        // down walk through
+
         currCoord[0] = coord[0];
-        for (int step = 0; step < 5; step++) {
+
+        for(step = 0; step < 5; ++step) {
             currCoord[0] = coord[0] + step;
+            if (currCoord[0] >= 15 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
+                break;
+            }
 
-            if (currCoord[0] >= 15) {
-                break;
-            }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[6] += 1;
-            } else {
-                break;
-            }
+            var10002 = steps[6]++;
         }
 
-        // right-up walk through
         currCoord[0] = coord[0];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] + step; // right
-            currCoord[0] = coord[0] - step; // up
 
-            if (currCoord[0] < 0 || currCoord[1] >= 15) {
+        for(step = 0; step < 5; ++step) {
+            currCoord[1] = coord[1] + step;
+            currCoord[0] = coord[0] - step;
+            if (currCoord[0] < 0 || currCoord[1] >= 15 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
                 break;
             }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[1] += 1;
-            } else {
-                break;
-            }
+
+            var10002 = steps[1]++;
         }
-        // left-down walk through
+
         currCoord[0] = coord[0];
         currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] - step; // left
-            currCoord[0] = coord[0] + step; // down
 
-            if (currCoord[0] >= 15 || currCoord[1] < 0) {
+        for(step = 0; step < 5; ++step) {
+            currCoord[1] = coord[1] - step;
+            currCoord[0] = coord[0] + step;
+            if (currCoord[0] >= 15 || currCoord[1] < 0 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
                 break;
             }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[5] += 1;
-            } else {
-                break;
-            }
+
+            var10002 = steps[5]++;
         }
-        // left-up walk through
+
         currCoord[0] = coord[0];
         currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] - step; // left
-            currCoord[0] = coord[0] - step; // up
 
-            if (currCoord[0] < 0 || currCoord[1] < 0) {
+        for(step = 0; step < 5; ++step) {
+            currCoord[1] = coord[1] - step;
+            currCoord[0] = coord[0] - step;
+            if (currCoord[0] < 0 || currCoord[1] < 0 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
                 break;
             }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[3] += 1;
-            } else {
-                break;
-            }
+
+            var10002 = steps[3]++;
         }
-        // right-down walk through
+
         currCoord[0] = coord[0];
         currCoord[1] = coord[1];
-        for (int step = 0; step < 5; step++) {
-            currCoord[1] = coord[1] + step; // right
-            currCoord[0] = coord[0] + step; // down
 
-            if (currCoord[0] >= 15 || currCoord[1] >= 15) {
+        for(step = 0; step < 5; ++step) {
+            currCoord[1] = coord[1] + step;
+            currCoord[0] = coord[0] + step;
+            if (currCoord[0] >= 15 || currCoord[1] >= 15 || game.chessboard[this.get1DCoord(currCoord[0], currCoord[1])] != color) {
                 break;
             }
-            if (game.chessboard[get1DCoord(currCoord[0], currCoord[1])] == color) {
-                steps[7] += 1;
-            } else {
-                break;
-            }
+
+            var10002 = steps[7]++;
         }
+
         logger.debug("steps: " + Arrays.toString(steps));
-        // check sum up
         if (steps[0] + steps[4] >= 6) {
             return color;
-        }
-        if (steps[2] + steps[6] >= 6) {
+        } else if (steps[2] + steps[6] >= 6) {
             return color;
-        }
-        if (steps[1] + steps[5] >= 6) {
+        } else if (steps[1] + steps[5] >= 6) {
             return color;
+        } else {
+            return steps[3] + steps[7] >= 6 ? color : -1;
         }
-        if (steps[3] + steps[7] >= 6) {
-            return color;
+    }
+
+    private void sync(ClientStatus clientStatus) {
+        logger.debug(String.format("Client %d syncs with server.", clientStatus.connectionId));
+        if (!this.checkSession(clientStatus)) {
+            logger.debug(String.format("Client %d syncs failed.", clientStatus.connectionId));
+            clientStatus.status = "syncFailed";
+            this.updateClientStatus(clientStatus);
+            clientStatus.send();
         }
-        return -1; // default, continue
+
+        ClientStatus peerStatus = this.getPeer(clientStatus);
+        peerStatus.game = clientStatus.game;
+        int win = this.checkGameEnd(clientStatus.game, clientStatus.chakuIndex);
+        ClientStatus whiteStatus = clientStatus.isFirstMove == 0 ? clientStatus : peerStatus;
+        ClientStatus blackStatus = peerStatus.isFirstMove == 1 ? peerStatus : clientStatus;
+        if (win == 1) {
+            blackStatus.status = "win";
+            ++blackStatus.user.score;
+            this.updateUser(blackStatus.user);
+            whiteStatus.status = "lose";
+            logger.info(String.format("Black client %d wins in session %s.", blackStatus.connectionId, blackStatus.sessionId));
+            logger.info(String.format("User %s id %d score updated, currently %d", blackStatus.user.name, blackStatus.user.id, blackStatus.user.score));
+            this.updateClientStatus(clientStatus);
+            this.updateClientStatus(peerStatus);
+            this.updateSessionClient(clientStatus);
+            this.updateSessionClient(peerStatus);
+            clientStatus.send();
+            logger.debug(String.format("Sent game end signal to client %s.", clientStatus.connectionId));
+            peerStatus.send();
+            logger.debug(String.format("Sent game end signal to client %s.", peerStatus.connectionId));
+            this.addGamesHistory(clientStatus.sessionId);
+            this.removeSession(clientStatus.sessionId);
+            this.removeClient(clientStatus);
+            this.removeClient(peerStatus);
+            logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
+            peerStatus.conn.close();
+            clientStatus.conn.close();
+        } else if (win == 0) {
+            blackStatus.status = "lose";
+            whiteStatus.status = "win";
+            ++whiteStatus.user.score;
+            this.updateUser(whiteStatus.user);
+            logger.info(String.format("White client %d wins in session %s.", whiteStatus.connectionId, whiteStatus.sessionId));
+            logger.info(String.format("User %s id %d score updated, currently %d", whiteStatus.user.name, whiteStatus.user.id, whiteStatus.user.score));
+            this.updateClientStatus(clientStatus);
+            this.updateClientStatus(peerStatus);
+            this.updateSessionClient(clientStatus);
+            this.updateSessionClient(peerStatus);
+            clientStatus.send();
+            logger.debug(String.format("Sent game end signal to client %s.", clientStatus.connectionId));
+            peerStatus.send();
+            logger.debug(String.format("Sent game end signal to client %s.", peerStatus.connectionId));
+            this.addGamesHistory(clientStatus.sessionId);
+            this.removeSession(clientStatus.sessionId);
+            this.removeClient(clientStatus);
+            this.removeClient(peerStatus);
+            logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
+            peerStatus.conn.close();
+            clientStatus.conn.close();
+        } else {
+            peerStatus.status = "sync";
+            this.updateClientStatus(clientStatus);
+            this.updateClientStatus(peerStatus);
+            this.updateSessionClient(clientStatus);
+            this.updateSessionClient(peerStatus);
+            peerStatus.send();
+            logger.debug(String.format("Sent sync package to client %s.", peerStatus.connectionId));
+        }
+
+    }
+
+    private void terminateGame(ClientStatus clientStatus, WebSocket conn) {
+        logger.debug(String.format("Client %d wants to end a game.", clientStatus.connectionId));
+        if (!this.checkSession(clientStatus)) {
+            logger.debug(String.format("Client %d terminate game failed.", clientStatus.connectionId));
+        }
+
+        clientStatus.status = "terminated";
+        ClientStatus peerStatus = this.getPeer(clientStatus);
+        peerStatus.status = "terminated";
+        this.updateClientStatus(clientStatus);
+        this.updateClientStatus(peerStatus);
+        this.updateSessionClient(clientStatus);
+        this.updateSessionClient(peerStatus);
+        clientStatus.send();
+        logger.debug(String.format("Sent terminate signal to client %s.", clientStatus.connectionId));
+        peerStatus.send();
+        logger.debug(String.format("Sent terminate signal to client %s.", peerStatus.connectionId));
+        this.addGamesHistory(clientStatus.sessionId);
+        this.removeSession(clientStatus.sessionId);
+        this.removeClient(clientStatus);
+        this.removeClient(peerStatus);
+        logger.debug(String.format("Removed session %d and clients %d and %d.", clientStatus.sessionId, clientStatus.connectionId, peerStatus.connectionId));
+        peerStatus.conn.close();
+        clientStatus.conn.close();
+    }
+
+    private void clientRegister(ClientStatus clientStatus) {
+        String userName = clientStatus.user.name;
+        String userPassword = clientStatus.user.token;
+        logger.debug(String.format("Client %d wants to register with name %s and password %s.", clientStatus.connectionId, userName, userPassword));
+        User newUser = this.register(userName, userPassword);
+        logger.debug(String.format("Registered userId %d", newUser.id));
+        clientStatus.user = newUser;
+        clientStatus.status = "registered";
+        this.updateClientStatus(clientStatus);
+        clientStatus.send();
+        logger.debug(String.format("Sent user id to client %s.", clientStatus.user.id));
+    }
+
+    private void clientLogin(ClientStatus clientStatus) {
+        logger.debug(String.format("Client %d trying to login with name %s userId %s and password %s.", clientStatus.connectionId, clientStatus.user.name, clientStatus.user.id, clientStatus.user.token));
+        if (!this.checkUser(clientStatus.user)) {
+            logger.debug(String.format("Client %d login failed.", clientStatus.connectionId));
+            clientStatus.status = "loginFailed";
+            this.updateClientStatus(clientStatus);
+            clientStatus.send();
+        }
+
+        if (!this.waitingCheck()) {
+            this.addWaiting(clientStatus);
+            logger.debug(String.format("Client %d is waiting for peer.", clientStatus.connectionId));
+        } else {
+            ClientStatus peerStatus = this.waitingPoll();
+            clientStatus.status = "loggedIn";
+            peerStatus.status = "loggedIn";
+            Session session = this.assignSession(peerStatus, clientStatus);
+            logger.debug(String.format("Client %d and %d are assigned to session %d with sessionToken %s.", clientStatus.connectionId, peerStatus.connectionId, session.sessionId, session.sessionToken));
+            this.updateClientStatus(clientStatus);
+            this.updateClientStatus(peerStatus);
+            this.addSession(session);
+            clientStatus.send();
+            logger.debug(String.format("Sent game start signal to client %s.", clientStatus.connectionId));
+            peerStatus.send();
+            logger.debug(String.format("Sent game start signal to client %s.", peerStatus.connectionId));
+        }
+    }
+
+    public void exit() throws IOException, InterruptedException {
+        Iterator var1 = activeSessions.iterator();
+
+        while(var1.hasNext()) {
+            Session session = (Session)var1.next();
+            this.terminateGame(session.client1, session.client1.conn);
+        }
+
+        this.saveToFile();
+        this.stop();
     }
 }
